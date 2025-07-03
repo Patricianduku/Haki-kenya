@@ -5,7 +5,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { supabase, UserRole } from '@/lib/supabase'
+import { apiClient } from '@/lib/api'
+import { UserRole } from '@shared/schema'
 import { useToast } from '@/hooks/use-toast'
 import { Loader2 } from 'lucide-react'
 
@@ -41,42 +42,23 @@ export const SignUpForm = () => {
 
     setLoading(true)
     try {
-      // Sign up the user
-      const { data: authData, error: authError } = await supabase.auth.signUp({
+      await apiClient.signup({
         email: data.email,
-        password: data.password,
-        options: {
-          data: {
-            full_name: data.fullName,
-            role: data.role,
-          }
-        }
+        full_name: data.fullName,
+        role: data.role,
+        phone: data.phone,
+        location: data.location,
+        specialization: data.specialization,
+        bar_number: data.barNumber,
       })
-
-      if (authError) throw authError
-
-      // Create profile
-      if (authData.user) {
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .insert({
-            id: authData.user.id,
-            email: data.email,
-            full_name: data.fullName,
-            role: data.role,
-            phone: data.phone,
-            location: data.location,
-            specialization: data.specialization,
-            bar_number: data.barNumber,
-          })
-
-        if (profileError) throw profileError
-      }
 
       toast({
         title: 'Account created!',
-        description: 'Please check your email to verify your account.',
+        description: 'You have successfully created your account.',
       })
+      
+      // Redirect to dashboard
+      window.location.href = '/dashboard'
     } catch (error: any) {
       toast({
         title: 'Sign up failed',

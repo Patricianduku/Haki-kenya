@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { supabase } from '@/lib/supabase'
+import { apiClient } from '@/lib/api'
 import { useToast } from '@/hooks/use-toast'
 import { Loader2 } from 'lucide-react'
 
@@ -21,17 +21,15 @@ export const LoginForm = () => {
   const onSubmit = async (data: LoginFormData) => {
     setLoading(true)
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email: data.email,
-        password: data.password,
-      })
-
-      if (error) throw error
+      await apiClient.login(data.email, data.password)
 
       toast({
         title: 'Welcome back!',
         description: 'You have successfully logged in.',
       })
+      
+      // Redirect to dashboard
+      window.location.href = '/dashboard'
     } catch (error: any) {
       toast({
         title: 'Login failed',
@@ -43,34 +41,11 @@ export const LoginForm = () => {
     }
   }
 
-  const handleForgotPassword = async (email: string) => {
-    if (!email) {
-      toast({
-        title: 'Email required',
-        description: 'Please enter your email address first.',
-        variant: 'destructive',
-      })
-      return
-    }
-
-    try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`,
-      })
-
-      if (error) throw error
-
-      toast({
-        title: 'Password reset sent',
-        description: 'Check your email for the password reset link.',
-      })
-    } catch (error: any) {
-      toast({
-        title: 'Error',
-        description: error.message,
-        variant: 'destructive',
-      })
-    }
+  const handleForgotPassword = () => {
+    toast({
+      title: 'Password reset',
+      description: 'Please contact support for password reset assistance.',
+    })
   }
 
   return (
@@ -122,10 +97,7 @@ export const LoginForm = () => {
             type="button"
             variant="ghost"
             className="w-full"
-            onClick={() => {
-              const email = (document.getElementById('email') as HTMLInputElement)?.value
-              handleForgotPassword(email)
-            }}
+            onClick={handleForgotPassword}
           >
             Forgot Password?
           </Button>

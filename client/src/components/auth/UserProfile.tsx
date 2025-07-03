@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Textarea } from '@/components/ui/textarea'
-import { supabase, Profile } from '@/lib/supabase'
+import { apiClient, Profile } from '@/lib/api'
 import { useAuth } from '@/hooks/useAuth'
 import { useToast } from '@/hooks/use-toast'
 import { Loader2, User } from 'lucide-react'
@@ -42,15 +42,7 @@ export const UserProfile = () => {
 
     setLoading(true)
     try {
-      const { error } = await supabase
-        .from('profiles')
-        .update({
-          ...data,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', user.id)
-
-      if (error) throw error
+      await apiClient.updateProfile(user.id, data)
 
       toast({
         title: 'Profile updated',
