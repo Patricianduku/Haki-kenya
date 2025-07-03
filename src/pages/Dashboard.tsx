@@ -2,10 +2,19 @@ import { useAuth } from '@/hooks/useAuth'
 import { UserProfile } from '@/components/auth/UserProfile'
 import { QuestionForm } from '@/components/legal/QuestionForm'
 import { LawyerDashboard } from '@/components/legal/LawyerDashboard'
+import { ConsultationBookingForm } from '@/components/consultations/ConsultationBookingForm'
+import { LawyerCalendar } from '@/components/consultations/LawyerCalendar'
+import { DocumentLibrary } from '@/components/documents/DocumentLibrary'
+import { FileUpload } from '@/components/documents/FileUpload'
+import { AnonymousReportForm } from '@/components/reports/AnonymousReportForm'
+import { AdminReportsDashboard } from '@/components/reports/AdminReportsDashboard'
+import { ClientQuestionsHistory } from '@/components/legal/ClientQuestionsHistory'
+import { ClientConsultationsHistory } from '@/components/consultations/ClientConsultationsHistory'
+import { UserDocuments } from '@/components/documents/UserDocuments'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Loader2, LogOut, User, FileQuestion, Gavel } from 'lucide-react'
+import { Loader2, LogOut, User, FileQuestion, Gavel, Calendar, FileText, Upload, Shield, AlertTriangle } from 'lucide-react'
 
 const Dashboard = () => {
   const { user, profile, loading, signOut, isClient, isLawyer, isParalegal } = useAuth()
@@ -62,22 +71,48 @@ const Dashboard = () => {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
         <Tabs defaultValue="profile" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-8">
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 lg:grid-cols-6 mb-8">
             <TabsTrigger value="profile" className="flex items-center space-x-2">
               <User className="h-4 w-4" />
               <span>Profile</span>
             </TabsTrigger>
+            
             {isClient && (
-              <TabsTrigger value="questions" className="flex items-center space-x-2">
-                <FileQuestion className="h-4 w-4" />
-                <span>My Questions</span>
-              </TabsTrigger>
+              <>
+                <TabsTrigger value="questions" className="flex items-center space-x-2">
+                  <FileQuestion className="h-4 w-4" />
+                  <span>Questions</span>
+                </TabsTrigger>
+                <TabsTrigger value="consultations" className="flex items-center space-x-2">
+                  <Calendar className="h-4 w-4" />
+                  <span>Consultations</span>
+                </TabsTrigger>
+                <TabsTrigger value="documents" className="flex items-center space-x-2">
+                  <FileText className="h-4 w-4" />
+                  <span>Documents</span>
+                </TabsTrigger>
+                <TabsTrigger value="reports" className="flex items-center space-x-2">
+                  <AlertTriangle className="h-4 w-4" />
+                  <span>Report Issue</span>
+                </TabsTrigger>
+              </>
             )}
+            
             {(isLawyer || isParalegal) && (
-              <TabsTrigger value="lawyer-dashboard" className="flex items-center space-x-2">
-                <Gavel className="h-4 w-4" />
-                <span>Legal Cases</span>
-              </TabsTrigger>
+              <>
+                <TabsTrigger value="lawyer-dashboard" className="flex items-center space-x-2">
+                  <Gavel className="h-4 w-4" />
+                  <span>Legal Cases</span>
+                </TabsTrigger>
+                <TabsTrigger value="calendar" className="flex items-center space-x-2">
+                  <Calendar className="h-4 w-4" />
+                  <span>Calendar</span>
+                </TabsTrigger>
+                <TabsTrigger value="admin-reports" className="flex items-center space-x-2">
+                  <Shield className="h-4 w-4" />
+                  <span>Reports</span>
+                </TabsTrigger>
+              </>
             )}
           </TabsList>
 
@@ -86,32 +121,62 @@ const Dashboard = () => {
           </TabsContent>
 
           {isClient && (
-            <TabsContent value="questions">
-              <div className="space-y-8">
-                <QuestionForm />
-                
-                {/* Client's Questions History could go here */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Your Questions</CardTitle>
-                    <CardDescription>
-                      Track the status of your submitted legal questions
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground text-center py-8">
-                      Your question history will appear here once you submit questions.
-                    </p>
-                  </CardContent>
-                </Card>
-              </div>
-            </TabsContent>
+            <>
+              <TabsContent value="questions">
+                <div className="space-y-8">
+                  <QuestionForm />
+                  <ClientQuestionsHistory />
+                </div>
+              </TabsContent>
+
+              <TabsContent value="consultations">
+                <div className="space-y-8">
+                  <ConsultationBookingForm />
+                  <ClientConsultationsHistory />
+                </div>
+              </TabsContent>
+
+              <TabsContent value="documents">
+                <div className="space-y-8">
+                  <Tabs defaultValue="library" className="w-full">
+                    <TabsList>
+                      <TabsTrigger value="library">Document Library</TabsTrigger>
+                      <TabsTrigger value="upload">Upload Document</TabsTrigger>
+                      <TabsTrigger value="my-documents">My Documents</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="library">
+                      <DocumentLibrary />
+                    </TabsContent>
+                    <TabsContent value="upload">
+                      <FileUpload />
+                    </TabsContent>
+                    <TabsContent value="my-documents">
+                      <UserDocuments />
+                    </TabsContent>
+                  </Tabs>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="reports">
+                <AnonymousReportForm />
+              </TabsContent>
+            </>
           )}
 
           {(isLawyer || isParalegal) && (
-            <TabsContent value="lawyer-dashboard">
-              <LawyerDashboard />
-            </TabsContent>
+            <>
+              <TabsContent value="lawyer-dashboard">
+                <LawyerDashboard />
+              </TabsContent>
+
+              <TabsContent value="calendar">
+                <LawyerCalendar />
+              </TabsContent>
+
+              <TabsContent value="admin-reports">
+                <AdminReportsDashboard />
+              </TabsContent>
+            </>
           )}
         </Tabs>
       </main>
