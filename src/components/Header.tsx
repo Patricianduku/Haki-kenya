@@ -33,10 +33,10 @@ const Header = () => {
           </nav>
 
           <div className="flex items-center space-x-3">
-            <Button variant="ghost" size="sm">
+            <Button variant="ghost" size="sm" onClick={() => window.location.href = '/auth'}>
               Login
             </Button>
-            <Button variant="hero" size="sm">
+            <Button variant="hero" size="sm" onClick={() => window.location.href = '/dashboard'}>
               Get Help Now
             </Button>
           </div>
