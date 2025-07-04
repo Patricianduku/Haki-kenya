@@ -1,8 +1,18 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { useNavigate } from "react-router-dom";
 import heroImage from "@/assets/hero-legal-aid.jpg";
 
 const Hero = () => {
+  const navigate = useNavigate();
+
+  const scrollToSection = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <section className="relative bg-gradient-hero py-20 overflow-hidden">
       {/* Background Image with Overlay */}
@@ -26,13 +36,19 @@ const Hero = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
-            <Button variant="secondary" size="lg" className="flex-1">
+            <Button 
+              variant="secondary" 
+              size="lg" 
+              className="flex-1"
+              onClick={() => scrollToSection('guides')}
+            >
               Explore Legal Guides
             </Button>
             <Button 
               variant="outline" 
               size="lg" 
               className="flex-1 bg-white/10 border-white/30 text-white hover:bg-white/20"
+              onClick={() => scrollToSection('lawyers')}
             >
               Find a Lawyer
             </Button>

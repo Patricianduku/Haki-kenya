@@ -3,10 +3,19 @@ import { Card } from "@/components/ui/card";
 import { NotificationCenter } from "@/components/notifications/NotificationCenter";
 import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher";
 import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 import { FileText, Users, Search } from "lucide-react";
 
 const Header = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const scrollToSection = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   return (
     <header className="bg-white shadow-soft sticky top-0 z-50">
@@ -23,27 +32,39 @@ const Header = () => {
           </div>
           
           <nav className="hidden md:flex items-center space-x-6">
-            <a href="#guides" className="text-foreground hover:text-primary transition-smooth">
+            <button 
+              onClick={() => scrollToSection('guides')} 
+              className="text-foreground hover:text-primary transition-smooth"
+            >
               Legal Guides
-            </a>
-            <a href="#templates" className="text-foreground hover:text-primary transition-smooth">
+            </button>
+            <button 
+              onClick={() => scrollToSection('templates')} 
+              className="text-foreground hover:text-primary transition-smooth"
+            >
               Documents
-            </a>
-            <a href="#lawyers" className="text-foreground hover:text-primary transition-smooth">
+            </button>
+            <button 
+              onClick={() => scrollToSection('lawyers')} 
+              className="text-foreground hover:text-primary transition-smooth"
+            >
               Find Lawyers
-            </a>
-            <a href="#consultation" className="text-foreground hover:text-primary transition-smooth">
+            </button>
+            <button 
+              onClick={() => scrollToSection('consultation')} 
+              className="text-foreground hover:text-primary transition-smooth"
+            >
               Consultation
-            </a>
+            </button>
           </nav>
 
           <div className="flex items-center space-x-3">
             <LanguageSwitcher />
             {user && <NotificationCenter />}
-            <Button variant="ghost" size="sm" onClick={() => window.location.href = '/auth'}>
+            <Button variant="ghost" size="sm" onClick={() => navigate(user ? '/dashboard' : '/auth')}>
               {user ? 'Dashboard' : 'Login'}
             </Button>
-            <Button variant="hero" size="sm" onClick={() => window.location.href = '/dashboard'}>
+            <Button variant="hero" size="sm" onClick={() => navigate('/dashboard')}>
               Get Help Now
             </Button>
           </div>

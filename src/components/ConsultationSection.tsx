@@ -1,10 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { useNavigate } from "react-router-dom";
 import { Clock, Video, MessageCircle, Calendar } from "lucide-react";
 import consultationIcon from "@/assets/consultation-icon.png";
 
 const ConsultationSection = () => {
+  const navigate = useNavigate();
+  
   const consultationTypes = [
     {
       title: "Quick Legal Query",
@@ -122,6 +125,7 @@ const ConsultationSection = () => {
                   <Button 
                     variant={consultation.popular ? "default" : "outline"} 
                     className="w-full"
+                    onClick={() => navigate('/dashboard')}
                   >
                     Book Now
                   </Button>
@@ -154,7 +158,11 @@ const ConsultationSection = () => {
                 ))}
               </div>
               <div className="text-center mt-6">
-                <Button variant="trust" size="lg">
+                <Button 
+                  variant="trust" 
+                  size="lg"
+                  onClick={() => navigate('/dashboard')}
+                >
                   Schedule Free 5-min Call
                 </Button>
                 <p className="text-xs text-muted-foreground mt-2">

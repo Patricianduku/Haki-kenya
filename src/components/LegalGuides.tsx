@@ -1,9 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { useNavigate } from "react-router-dom";
 import { FileText, Clock, Users } from "lucide-react";
 
 const LegalGuides = () => {
+  const navigate = useNavigate();
+  
   const guides = [
     {
       title: "Land Disputes Resolution",
@@ -127,7 +130,11 @@ const LegalGuides = () => {
                   >
                     {guide.difficulty}
                   </Badge>
-                  <Button variant="trust" size="sm">
+                  <Button 
+                    variant="trust" 
+                    size="sm"
+                    onClick={() => navigate('/dashboard')}
+                  >
                     Start Guide
                   </Button>
                 </div>
@@ -137,7 +144,11 @@ const LegalGuides = () => {
         </div>
 
         <div className="text-center mt-12">
-          <Button variant="outline" size="lg">
+          <Button 
+            variant="outline" 
+            size="lg"
+            onClick={() => navigate('/dashboard')}
+          >
             View All Legal Guides
           </Button>
         </div>

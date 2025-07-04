@@ -1,10 +1,22 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 import { FileText, Download } from "lucide-react";
 import legalDocsIcon from "@/assets/legal-docs-icon.png";
 
 const DocumentTemplates = () => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const handleDownload = (templateTitle: string) => {
+    toast({
+      title: "Download started",
+      description: `Downloading ${templateTitle}`,
+    });
+  };
+  
   const templates = [
     {
       title: "Demand Letter Template",
@@ -132,7 +144,12 @@ const DocumentTemplates = () => {
                 
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-semibold text-foreground">Free Download</span>
-                  <Button variant="success" size="sm" className="flex items-center gap-2">
+                  <Button 
+                    variant="success" 
+                    size="sm" 
+                    className="flex items-center gap-2"
+                    onClick={() => handleDownload(template.title)}
+                  >
                     <Download className="w-4 h-4" />
                     Download
                   </Button>
@@ -143,7 +160,11 @@ const DocumentTemplates = () => {
         </div>
 
         <div className="text-center mt-12">
-          <Button variant="outline" size="lg">
+          <Button 
+            variant="outline" 
+            size="lg"
+            onClick={() => navigate('/dashboard')}
+          >
             Browse All Templates
           </Button>
         </div>
