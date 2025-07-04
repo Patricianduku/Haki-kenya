@@ -1,49 +1,58 @@
 import { useState, useEffect } from 'react'
-import { apiClient, type Profile } from '@/lib/api'
-import { useToast } from '@/hooks/use-toast'
+import { User } from '@supabase/supabase-js'
+import { supabase, Profile } from '@/lib/supabase'
 
 export const useAuth = () => {
-  const [user, setUser] = useState<any>(null)
+  const [user, setUser] = useState<User | null>(null)
   const [profile, setProfile] = useState<Profile | null>(null)
   const [loading, setLoading] = useState(true)
-  const { toast } = useToast()
 
   useEffect(() => {
-    // Get current session
-    const getCurrentSession = async () => {
-      try {
-        const { profile: profileData } = await apiClient.getCurrentUser()
-        setUser({ id: profileData.id, email: profileData.email })
-        setProfile(profileData)
-      } catch (error) {
-        setUser(null)
-        setProfile(null)
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null)
+      if (session?.user) {
+        fetchProfile(session.user.id)
+      } else {
+        setLoading(false)
       }
-      setLoading(false)
-    }
+    })
 
-    getCurrentSession()
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        setUser(session?.user ?? null)
+        if (session?.user) {
+          await fetchProfile(session.user.id)
+        } else {
+          setProfile(null)
+          setLoading(false)
+        }
+      }
+    )
+
+    return () => subscription.unsubscribe()
   }, [])
 
-  const signOut = async () => {
+  const fetchProfile = async (userId: string) => {
     try {
-      await apiClient.logout()
-      setUser(null)
-      setProfile(null)
-      toast({
-        title: 'Signed out successfully',
-        description: 'You have been logged out of your account.',
-      })
-      // Redirect to home page
-      window.location.href = '/'
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single()
+
+      if (error) throw error
+      setProfile(data)
     } catch (error) {
-      console.error('Sign out error:', error)
-      toast({
-        title: 'Sign out failed',
-        description: 'There was an error signing you out.',
-        variant: 'destructive',
-      })
+      console.error('Error fetching profile:', error)
+    } finally {
+      setLoading(false)
     }
+  }
+
+  const signOut = async () => {
+    await supabase.auth.signOut()
   }
 
   return {
