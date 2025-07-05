@@ -1,10 +1,19 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { LoginForm } from '@/components/auth/LoginForm'
 import { SignUpForm } from '@/components/auth/SignUpForm'
+import { useSearchParams } from 'react-router-dom'
 
 const Auth = () => {
+  const [searchParams] = useSearchParams()
   const [isLogin, setIsLogin] = useState(true)
+
+  useEffect(() => {
+    const signup = searchParams.get('signup')
+    if (signup === 'true') {
+      setIsLogin(false)
+    }
+  }, [searchParams])
 
   return (
     <div className="min-h-screen bg-gradient-hero flex items-center justify-center p-4">

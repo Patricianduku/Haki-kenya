@@ -125,7 +125,11 @@ const ConsultationSection = () => {
                   <Button 
                     variant={consultation.popular ? "default" : "outline"} 
                     className="w-full"
-                    onClick={() => navigate('/dashboard')}
+                    onClick={() => {
+                      // Store consultation type in localStorage for the booking form
+                      localStorage.setItem('selectedConsultationType', JSON.stringify(consultation));
+                      navigate('/consultations');
+                    }}
                   >
                     Book Now
                   </Button>
@@ -146,22 +150,28 @@ const ConsultationSection = () => {
             <CardContent>
               <div className="grid grid-cols-5 gap-3">
                 {availableSlots.map((slot, index) => (
-                  <Button
-                    key={index}
-                    variant={slot.available ? "outline" : "ghost"}
-                    size="sm"
-                    disabled={!slot.available}
-                    className={`${slot.available ? 'hover:bg-primary hover:text-primary-foreground' : 'opacity-50'}`}
-                  >
-                    {slot.time}
-                  </Button>
+                                  <Button
+                  key={index}
+                  variant={slot.available ? "outline" : "ghost"}
+                  size="sm"
+                  disabled={!slot.available}
+                  className={`${slot.available ? 'hover:bg-primary hover:text-primary-foreground' : 'opacity-50'}`}
+                  onClick={() => {
+                    if (slot.available) {
+                      localStorage.setItem('selectedTimeSlot', slot.time);
+                      navigate('/consultations');
+                    }
+                  }}
+                >
+                  {slot.time}
+                </Button>
                 ))}
               </div>
               <div className="text-center mt-6">
                 <Button 
                   variant="trust" 
                   size="lg"
-                  onClick={() => navigate('/dashboard')}
+                  onClick={() => navigate('/consultations')}
                 >
                   Schedule Free 5-min Call
                 </Button>

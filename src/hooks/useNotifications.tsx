@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
 import { useToast } from '@/hooks/use-toast'
+import { CheckCircle, AlertCircle, Info, XCircle, Star, Phone, Mail, Calendar, Download, FileText } from "lucide-react"
 
 interface Notification {
   id: string
@@ -167,11 +168,161 @@ export const useNotifications = () => {
     setUnreadCount(0)
   }
 
+  const showSuccess = (title: string, description?: string) => {
+    toast({
+      title,
+      description,
+      icon: <CheckCircle className="w-5 h-5 text-green-600" />,
+      className: "border-green-200 bg-green-50",
+    })
+  }
+
+  const showError = (title: string, description?: string) => {
+    toast({
+      title,
+      description,
+      icon: <XCircle className="w-5 h-5 text-red-600" />,
+      className: "border-red-200 bg-red-50",
+    })
+  }
+
+  const showWarning = (title: string, description?: string) => {
+    toast({
+      title,
+      description,
+      icon: <AlertCircle className="w-5 h-5 text-yellow-600" />,
+      className: "border-yellow-200 bg-yellow-50",
+    })
+  }
+
+  const showInfo = (title: string, description?: string) => {
+    toast({
+      title,
+      description,
+      icon: <Info className="w-5 h-5 text-blue-600" />,
+      className: "border-blue-200 bg-blue-50",
+    })
+  }
+
+  const showBookingConfirmation = (lawyerName: string, date: string, time: string) => {
+    toast({
+      title: "Booking Confirmed!",
+      description: `Your consultation with ${lawyerName} is scheduled for ${date} at ${time}`,
+      icon: <Calendar className="w-5 h-5 text-green-600" />,
+      className: "border-green-200 bg-green-50",
+    })
+  }
+
+  const showCallInitiated = (phoneNumber: string) => {
+    toast({
+      title: "Call Initiated",
+      description: `Calling ${phoneNumber}...`,
+      icon: <Phone className="w-5 h-5 text-blue-600" />,
+      className: "border-blue-200 bg-blue-50",
+    })
+  }
+
+  const showEmailOpened = (email: string) => {
+    toast({
+      title: "Email Client Opened",
+      description: `Opening email client for ${email}`,
+      icon: <Mail className="w-5 h-5 text-blue-600" />,
+      className: "border-blue-200 bg-blue-50",
+    })
+  }
+
+  const showDownloadStarted = (fileName: string) => {
+    toast({
+      title: "Download Started",
+      description: `Downloading ${fileName}...`,
+      icon: <Download className="w-5 h-5 text-green-600" />,
+      className: "border-green-200 bg-green-50",
+    })
+  }
+
+  const showDocumentSaved = (fileName: string) => {
+    toast({
+      title: "Document Saved",
+      description: `${fileName} has been saved to your documents`,
+      icon: <FileText className="w-5 h-5 text-green-600" />,
+      className: "border-green-200 bg-green-50",
+    })
+  }
+
+  const showRatingSubmitted = (rating: number) => {
+    toast({
+      title: "Rating Submitted",
+      description: `Thank you for your ${rating}-star rating!`,
+      icon: <Star className="w-5 h-5 text-yellow-600" />,
+      className: "border-yellow-200 bg-yellow-50",
+    })
+  }
+
+  const showOfflineMode = () => {
+    toast({
+      title: "Offline Mode",
+      description: "You're currently offline. Some features may be limited.",
+      icon: <AlertCircle className="w-5 h-5 text-yellow-600" />,
+      className: "border-yellow-200 bg-yellow-50",
+    })
+  }
+
+  const showOnlineMode = () => {
+    toast({
+      title: "Back Online",
+      description: "Connection restored. All features are now available.",
+      icon: <CheckCircle className="w-5 h-5 text-green-600" />,
+      className: "border-green-200 bg-green-50",
+    })
+  }
+
+  const showLanguageChanged = (language: string) => {
+    toast({
+      title: "Language Changed",
+      description: `Switched to ${language}`,
+      icon: <Info className="w-5 h-5 text-blue-600" />,
+      className: "border-blue-200 bg-blue-50",
+    })
+  }
+
+  const showSearchResults = (count: number, query?: string) => {
+    toast({
+      title: "Search Complete",
+      description: `Found ${count} results${query ? ` for "${query}"` : ''}`,
+      icon: <CheckCircle className="w-5 h-5 text-green-600" />,
+      className: "border-green-200 bg-green-50",
+    })
+  }
+
+  const showNoResults = (query?: string) => {
+    toast({
+      title: "No Results Found",
+      description: query ? `No results found for "${query}". Try different keywords.` : "No results found. Try adjusting your search.",
+      icon: <Info className="w-5 h-5 text-blue-600" />,
+      className: "border-blue-200 bg-blue-50",
+    })
+  }
+
   return {
     notifications,
     unreadCount,
     markAsRead,
     markAllAsRead,
-    clearNotifications
+    clearNotifications,
+    showSuccess,
+    showError,
+    showWarning,
+    showInfo,
+    showBookingConfirmation,
+    showCallInitiated,
+    showEmailOpened,
+    showDownloadStarted,
+    showDocumentSaved,
+    showRatingSubmitted,
+    showOfflineMode,
+    showOnlineMode,
+    showLanguageChanged,
+    showSearchResults,
+    showNoResults,
   }
 }

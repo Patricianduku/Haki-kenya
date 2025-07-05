@@ -1,75 +1,137 @@
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { NotificationCenter } from "@/components/notifications/NotificationCenter";
-import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher";
+import { Badge } from "@/components/ui/badge";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useTranslation } from "@/components/i18n/translations";
 import { useAuth } from "@/hooks/useAuth";
-import { useNavigate } from "react-router-dom";
-import { FileText, Users, Search } from "lucide-react";
+import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher";
+import { MobileNav } from "@/components/ui/mobile-nav";
+import { AccessibilityPanel } from "@/components/ui/accessibility";
+import { AISearch } from "@/components/ui/ai-search";
+import { useNotifications } from "@/hooks/useNotifications";
+import { Bell, User, Search, Menu } from "lucide-react";
 
 const Header = () => {
-  const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const { t } = useTranslation();
+  const { user, logout } = useAuth();
+  const { showInfo } = useNotifications();
 
-  const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
+  const handleSearch = (query: string) => {
+    // Navigate to lawyers page with search query
+    navigate(`/lawyers?search=${encodeURIComponent(query)}`);
+  };
+
+  const handleLogout = () => {
+    logout();
+    showInfo("Logged Out", "You have been successfully logged out.");
+    navigate('/');
   };
 
   return (
-    <header className="bg-white shadow-soft sticky top-0 z-50">
-      <div className="container mx-auto px-4 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-hero rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-lg">H</span>
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container mx-auto px-4">
+        <div className="flex h-16 items-center justify-between">
+          {/* Logo */}
+          <div className="flex items-center gap-2">
+            <div 
+              className="w-8 h-8 bg-gradient-hero rounded-lg flex items-center justify-center cursor-pointer"
+              onClick={() => navigate('/')}
+            >
+              <span className="text-white font-bold text-sm">H</span>
             </div>
-            <div>
-              <h1 className="text-xl font-bold text-foreground">Haki Kenya</h1>
-              <p className="text-sm text-muted-foreground">Legal Aid Platform</p>
-            </div>
+            <span className="font-bold text-xl text-foreground hidden sm:block">
+              Haki Kenya
+            </span>
           </div>
-          
-          <nav className="hidden md:flex items-center space-x-6">
-            <button 
-              onClick={() => scrollToSection('guides')} 
-              className="text-foreground hover:text-primary transition-smooth"
+
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center gap-4">
+            <Button
+              variant={location.pathname === '/lawyers' ? 'default' : 'ghost'}
+              onClick={() => navigate('/lawyers')}
+              className="text-sm"
             >
-              Legal Guides
-            </button>
-            <button 
-              onClick={() => scrollToSection('templates')} 
-              className="text-foreground hover:text-primary transition-smooth"
+              Lawyers
+            </Button>
+            <Button
+              variant={location.pathname === '/legal-guides' ? 'default' : 'ghost'}
+              onClick={() => navigate('/legal-guides')}
+              className="text-sm"
             >
-              Documents
-            </button>
-            <button 
-              onClick={() => scrollToSection('lawyers')} 
-              className="text-foreground hover:text-primary transition-smooth"
+              Guides
+            </Button>
+            <Button
+              variant={location.pathname === '/templates' ? 'default' : 'ghost'}
+              onClick={() => navigate('/templates')}
+              className="text-sm"
             >
-              Find Lawyers
-            </button>
-            <button 
-              onClick={() => scrollToSection('consultation')} 
-              className="text-foreground hover:text-primary transition-smooth"
+              Templates
+            </Button>
+            <Button
+              variant={location.pathname === '/consultations' ? 'default' : 'ghost'}
+              onClick={() => navigate('/consultations')}
+              className="text-sm"
             >
-              Consultation
-            </button>
+              Consultations
+            </Button>
           </nav>
 
-          <div className="flex items-center space-x-3">
+          {/* Desktop Search */}
+          <div className="hidden lg:flex items-center gap-4 flex-1 max-w-md mx-6">
+            <AISearch onSearch={handleSearch} />
+          </div>
+
+          {/* Desktop Right Section */}
+          <div className="hidden md:flex items-center gap-3">
+            {/* Language Switcher */}
             <LanguageSwitcher />
-            {user && <NotificationCenter />}
-            <Button variant="ghost" size="sm" onClick={() => navigate(user ? '/dashboard' : '/auth')}>
-              {user ? 'Dashboard' : 'Login'}
+            
+            {/* Notifications */}
+            <Button variant="ghost" size="sm" className="relative">
+              <Bell className="w-4 h-4" />
+              <Badge className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 text-xs">
+                3
+              </Badge>
             </Button>
-            <Button variant="hero" size="sm" onClick={() => navigate('/dashboard')}>
-              Get Help Now
-            </Button>
+
+            {/* User Menu */}
+            {user ? (
+              <div className="flex items-center gap-2">
+                <Button variant="outline" size="sm" onClick={() => navigate('/dashboard')}>
+                  <User className="w-4 h-4 mr-2" />
+                  {user.name || user.email}
+                </Button>
+                <Button variant="ghost" size="sm" onClick={handleLogout}>
+                  Logout
+                </Button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <Button variant="outline" size="sm" onClick={() => navigate('/auth')}>
+                  Login
+                </Button>
+                <Button size="sm" onClick={() => navigate('/auth?mode=signup')}>
+                  Sign Up
+                </Button>
+              </div>
+            )}
+          </div>
+
+          {/* Mobile Navigation */}
+          <div className="md:hidden flex items-center gap-2">
+            <MobileNav />
           </div>
         </div>
+
+        {/* Mobile Search Bar */}
+        <div className="md:hidden py-4 border-t">
+          <AISearch onSearch={handleSearch} />
+        </div>
       </div>
+
+      {/* Accessibility Panel */}
+      <AccessibilityPanel />
     </header>
   );
 };

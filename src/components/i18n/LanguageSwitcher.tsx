@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Globe } from 'lucide-react'
@@ -15,17 +15,16 @@ const languages: Language[] = [
 ]
 
 export const LanguageSwitcher = () => {
-  const [currentLanguage, setCurrentLanguage] = useState('en')
+  const [currentLanguage, setCurrentLanguage] = useState(() => {
+    return localStorage.getItem('preferred-language') || 'en'
+  })
 
   const handleLanguageChange = (languageCode: string) => {
     setCurrentLanguage(languageCode)
-    // Here you would implement the actual language switching logic
-    // This could involve updating a context, localStorage, or calling an i18n library
     localStorage.setItem('preferred-language', languageCode)
     
-    // For now, we'll just show a simple implementation
-    // In a real app, you'd use react-i18next or similar
-    console.log(`Language changed to: ${languageCode}`)
+    // Trigger a page reload to apply the new language across all components
+    window.location.reload()
   }
 
   const currentLang = languages.find(lang => lang.code === currentLanguage)

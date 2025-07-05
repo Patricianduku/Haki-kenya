@@ -175,11 +175,30 @@ const LawyerDirectory = () => {
                   </div>
                   
                   <div className="flex gap-2">
-                    <Button variant="trust" size="sm" className="flex-1">
+                    <Button 
+                      variant="trust" 
+                      size="sm" 
+                      className="flex-1"
+                      onClick={() => {
+                        // Show phone number and make call
+                        alert(`Calling ${lawyer.phone}`);
+                        window.open(`tel:${lawyer.phone}`, '_self');
+                      }}
+                    >
                       <Phone className="w-4 h-4 mr-1" />
-                      Call
+                      Call {lawyer.phone}
                     </Button>
-                    <Button variant="outline" size="sm" className="flex-1">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="flex-1"
+                      onClick={() => {
+                        // Show email and open email client
+                        const subject = encodeURIComponent(`Legal Consultation Request - ${lawyer.name}`);
+                        const body = encodeURIComponent(`Dear ${lawyer.name},\n\nI would like to schedule a legal consultation with you.\n\nPlease let me know your available times.\n\nBest regards,\n[Your Name]`);
+                        window.open(`mailto:${lawyer.email}?subject=${subject}&body=${body}`, '_self');
+                      }}
+                    >
                       <Mail className="w-4 h-4 mr-1" />
                       Email
                     </Button>
@@ -194,7 +213,7 @@ const LawyerDirectory = () => {
           <Button 
             variant="outline" 
             size="lg"
-            onClick={() => navigate('/dashboard')}
+            onClick={() => navigate('/lawyers')}
           >
             View All Lawyers
           </Button>

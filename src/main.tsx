@@ -9,5 +9,10 @@ if (!rootElement) {
   console.error('Root element not found!')
 } else {
   console.log('Root element found, rendering App...')
-  createRoot(rootElement).render(<App />)
+  try {
+    const root = createRoot(rootElement)
+    root.render(<App />)
+  } catch (error) {
+    console.error('Error creating root:', error)
+  }
 }

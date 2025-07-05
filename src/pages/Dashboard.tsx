@@ -15,9 +15,21 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Loader2, LogOut, User, FileQuestion, Gavel, Calendar, FileText, Upload, Shield, AlertTriangle } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { useSearchParams, useNavigate } from 'react-router-dom'
 
 const Dashboard = () => {
   const { user, profile, loading, signOut, isClient, isLawyer, isParalegal } = useAuth()
+  const [searchParams] = useSearchParams()
+  const [activeTab, setActiveTab] = useState('profile')
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    const tab = searchParams.get('tab')
+    if (tab) {
+      setActiveTab(tab)
+    }
+  }, [searchParams])
 
   if (loading) {
     return (
@@ -60,17 +72,22 @@ const Dashboard = () => {
               </div>
             </div>
             
-            <Button variant="ghost" onClick={signOut} className="flex items-center space-x-2">
-              <LogOut className="h-4 w-4" />
-              <span>Logout</span>
-            </Button>
+            <div className="flex items-center space-x-3">
+              <Button variant="ghost" onClick={() => navigate('/')} className="flex items-center space-x-2">
+                <span>← Back to Home</span>
+              </Button>
+              <Button variant="ghost" onClick={signOut} className="flex items-center space-x-2">
+                <LogOut className="h-4 w-4" />
+                <span>Logout</span>
+              </Button>
+            </div>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
-        <Tabs defaultValue="profile" className="w-full">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 lg:grid-cols-6 mb-8">
             <TabsTrigger value="profile" className="flex items-center space-x-2">
               <User className="h-4 w-4" />
