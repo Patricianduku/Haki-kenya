@@ -72,11 +72,7 @@ export const FileUpload = ({ onUploadComplete }: FileUploadProps) => {
       // Upload file to Supabase Storage
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('user-documents')
-        .upload(fileName, selectedFile, {
-          onUploadProgress: (progress) => {
-            setUploadProgress((progress.loaded / progress.total) * 100)
-          }
-        })
+        .upload(fileName, selectedFile)
 
       if (uploadError) throw uploadError
 

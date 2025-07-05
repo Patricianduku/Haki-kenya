@@ -71,7 +71,7 @@ export const AdminReportsDashboard = () => {
         .order('full_name')
 
       if (error) throw error
-      setLawyers(data || [])
+      setLawyers((data || []) as any)
     } catch (error: any) {
       console.error('Error loading lawyers:', error)
     }

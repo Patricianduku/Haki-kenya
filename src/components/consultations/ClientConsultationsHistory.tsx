@@ -41,7 +41,9 @@ export const ClientConsultationsHistory = () => {
         )
         .subscribe()
 
-      return () => subscription.unsubscribe()
+      return () => {
+        subscription.unsubscribe()
+      }
     }
   }, [user])
 
